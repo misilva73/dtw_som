@@ -14,8 +14,7 @@ except Exception as error_instance:
     )
 
 import pyclustering.core.som_wrapper as wrapper
-from pyclustering.nnet.som import type_conn, type_init, som, som_parameters
-from pyclustering.utils.dimension import dimension_info
+from pyclustering.nnet.som import type_conn, som
 from enum import IntEnum
 
 
