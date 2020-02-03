@@ -157,7 +157,7 @@ class DtwSom(som):
                 )
             n_anchors = len(anchors)
             max_square = min(self._rows, self._cols)
-            n_diagonals = 2*max_square-1
+            n_diagonals = 2 * max_square - 1
             # No anchors : raise error
             if n_anchors == 0:
                 raise AttributeError(
@@ -172,8 +172,8 @@ class DtwSom(som):
                 ]
                 data_sample = random.sample(remaining_data, self._size - n_anchors)
                 if n_anchors < n_diagonals:
-                    diagonals_list = anchors + data_sample[:n_diagonals-n_anchors]
-                    others_list = data_sample[n_diagonals-n_anchors:]
+                    diagonals_list = anchors + data_sample[: n_diagonals - n_anchors]
+                    others_list = data_sample[n_diagonals - n_anchors :]
                 else:
                     diagonals_list = anchors[:n_diagonals]
                     others_list = anchors[n_diagonals:] + data_sample
@@ -181,15 +181,15 @@ class DtwSom(som):
             else:
                 diagonals_list = anchors[:n_diagonals]
                 others_list = anchors[n_diagonals:]
-                raise Warning("Provided list contains more anchors than units. On the first are used to "
-                              "initialize the network")
+                raise Warning(
+                    "Provided list contains more anchors than units. On the first are used to "
+                    "initialize the network"
+                )
             random.shuffle(diagonals_list)
             random.shuffle(others_list)
             self.__fill_weights_with_anchors(max_square, diagonals_list, others_list)
         else:
-            raise AttributeError(
-                "The provided initialization type is not supported"
-            )
+            raise AttributeError("The provided initialization type is not supported")
 
     @staticmethod
     def __np_is_contained_in(obs, obs_lis):
@@ -297,9 +297,9 @@ class DtwSom(som):
         @param[in] data (list): Input data - list of points where each point is represented by list of features, for
         example coordinates.
         @param[in] epochs (uint): Number of epochs for training.
-        @param[in] autostop (bool): Automatic termination of learining process when adaptation is not occurred.
+        @param[in] autostop (bool): Automatic termination of learning process when adaptation is not occurred.
 
-        @return (uint) Number of learining iterations.
+        @return (uint) Number of learning iterations.
 
         """
 
@@ -376,6 +376,8 @@ class DtwSom(som):
         return epochs
 
     def _update_weights(self, winner_index, neighbor_index, x, dtw_dic_list):
+        is_multi_dim = isinstance(x[0], np.ndarray)
+
         sqrt_distance = self._sqrt_distances[winner_index][neighbor_index]
 
         if sqrt_distance < self._local_radius:
@@ -386,7 +388,15 @@ class DtwSom(som):
             neighbor_matching_dic = dtw_dic_list[neighbor_index]["matching_dic"]
             for i in range(len(self._weights[neighbor_index])):
                 matching_values = [x[j] for j in neighbor_matching_dic[i]]
-                mean_matching_value = np.mean(matching_values)
+                if is_multi_dim:
+                    n_dim = len(x[i])
+                    mean_matching_value = np.zeros(n_dim)
+                    for k in range(n_dim):
+                        k_values = [val[k] for val in matching_values]
+                        mean_matching_value[k] = np.mean(k_values)
+                else:
+                    mean_matching_value = np.mean(matching_values)
+
                 self._weights[neighbor_index][i] = self._weights[neighbor_index][
                     i
                 ] + self._learn_rate * influence * (
