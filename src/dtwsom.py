@@ -140,7 +140,6 @@ class DtwSom(som):
 
         return sqrt_distances
 
-    # TODO: Fix "martelada" in Anchor init type
     def _create_initial_weights(self, init_type, anchors=None):
         """!
         @brief Creates initial weights for neurons in line with the specified initialization.
@@ -150,17 +149,65 @@ class DtwSom(som):
         """
         if init_type == DtwTypeInit.random_sample:
             self._weights = random.sample(self._data, self._size)
+
         elif init_type == DtwTypeInit.anchors:
             if anchors is None:
-                raise AttributeError("To chose the anchor initialization, you must provide a list of anchors")
-            input_sample = random.sample(self._data, self._size)
-            for i in range(self._rows):
-                for j in range(self._cols):
-                    neuron_index = i * self._cols + j
-                    if i == j:
-                        self._weights[neuron_index] = anchors[i]
-                    else:
-                        self._weights[neuron_index] = input_sample[i]
+                raise AttributeError(
+                    "To chose the anchor initialization, you must provide a non-empty list of anchors"
+                )
+            n_anchors = len(anchors)
+            max_square = min(self._rows, self._cols)
+            n_diagonals = 2*max_square-1
+            # No anchors : raise error
+            if n_anchors == 0:
+                raise AttributeError(
+                    "To chose the anchor initialization, you must provide a non-empty list of anchors"
+                )
+            # Anchors < units : fill the diagonals, then fill the rest with anchors plus a sample from input data
+            if n_anchors < self._size:
+                remaining_data = [
+                    obs
+                    for obs in self._data
+                    if not self.__np_is_contained_in(obs, anchors)
+                ]
+                data_sample = random.sample(remaining_data, self._size - n_anchors)
+                if n_anchors < n_diagonals:
+                    diagonals_list = anchors + data_sample[:n_diagonals-n_anchors]
+                    others_list = data_sample[n_diagonals-n_anchors:]
+                else:
+                    diagonals_list = anchors[:n_diagonals]
+                    others_list = anchors[n_diagonals:] + data_sample
+            # Anchors >= units : fill the diagonals, then fill the rest with anchors, raise warning of unused anchors
+            else:
+                diagonals_list = anchors[:n_diagonals]
+                others_list = anchors[n_diagonals:]
+                raise Warning("Provided list contains more anchors than units. On the first are used to "
+                              "initialize the network")
+            random.shuffle(diagonals_list)
+            random.shuffle(others_list)
+            self.__fill_weights_with_anchors(max_square, diagonals_list, others_list)
+        else:
+            raise AttributeError(
+                "The provided initialization type is not supported"
+            )
+
+    @staticmethod
+    def __np_is_contained_in(obs, obs_lis):
+        for other_obs in obs_lis:
+            if np.array_equal(obs, other_obs):
+                return True
+        return False
+
+    def __fill_weights_with_anchors(self, max_square, diagonals_list, others_list):
+        for i in range(self._rows):
+            for j in range(self._cols):
+                neuron_index = i * self._cols + j
+                if i == j and (2 * j != max_square - 1):
+                    self._weights[neuron_index] = diagonals_list[i]
+                elif i == max_square - 1 - j:
+                    self._weights[neuron_index] = diagonals_list[i + max_square - 1]
+                else:
+                    self._weights[neuron_index] = others_list.pop(0)
 
     def __initialize_bmu_distance_list(self):
         data_size = len(self._data)
