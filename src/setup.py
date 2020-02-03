@@ -1,11 +1,11 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("../README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="dtw_som",
-    version="1.0.1",
+    name="dtw-som",
+    version="1.0.3",
     author="Maria Ines Silva",
     author_email="misilva73@gmail.com",
     description="DTW-SOM: Self-organizing map for time-series data",
@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license="GNU Public License",
     url="https://github.com/misilva73/dtw_som",
-    packages=setuptools.find_packages(),
+    py_modules=['dtwsom'],
     install_requires=['scipy', 'matplotlib', 'numpy', "pyclustering", "dtaidistance"],
     classifiers=[
         "Intended Audience :: Developers",

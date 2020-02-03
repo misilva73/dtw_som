@@ -51,7 +51,7 @@ python setup.py install
 Import packages and generate a dummy dataset with 2 clusters, a noisy sine curve and a noise line centered at 10:
 
 ```python
-import dtw_som
+import dtwsom
 import math
 import random
 import numpy as np
@@ -89,7 +89,7 @@ Define and train the network:
 rows = 3
 cols = 3
 structure = type_conn.grid_four
-network = dtw_som.DtwSom(rows, cols, structure)
+network = dtwsom.DtwSom(rows, cols, structure)
 
 network.train(sin_dataset, 20)
 ```
