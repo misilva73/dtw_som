@@ -20,9 +20,7 @@ from enum import IntEnum
 
 class DtwTypeInit(IntEnum):
     """!
-    @brief Enumeration of initialization types for DTW SOM.
-
-    @see som
+    @brief Enumeration of initialization types for DTW-SOM.
 
     """
 
@@ -35,13 +33,13 @@ class DtwTypeInit(IntEnum):
 
 class DtwSomParameters:
     """!
-    @brief Represents DTW SOM parameters.
+    @brief Represents DTW-SOM parameters.
 
     """
 
     def __init__(self):
         """!
-        @brief Constructor container of SOM parameters.
+        @brief Constructor container of DTW-SOM parameters.
 
         """
 
@@ -84,9 +82,6 @@ class DtwSom(som):
                  The DTW-SOM is then an adaptation of SOM for time-series subsequences with variable lengths
                  which used the Dynamic Time Warping (DTW) distance as the similarity metric.
 
-        @details CCORE option can be used to use the pyclustering core - C/C++ shared library for processing that
-        significantly increases performance.
-
         """
 
     def __init__(
@@ -122,7 +117,7 @@ class DtwSom(som):
 
     def __initialize_distances(self, size, location):
         """!
-        @brief Initialize distance matrix in SOM grid.
+        @brief Initialize distance matrix in DTW-SOM grid.
 
         @param[in] size (uint): Amount of neurons in the network.
         @param[in] location (list): List of coordinates of each neuron in the network.
@@ -248,7 +243,7 @@ class DtwSom(som):
 
     def _competition(self, x):
         """!
-        @brief Calculates neuron winner (distance, neuron index).
+        @brief Calculates the neuron winner (i.e., the BMU of x) and returns its index.
 
         @param[in] x (list): Input pattern from the input data set. It should be a list of arrays/floats, where each
         array/float is an observation of the one-dimensional/multidimensional time-series window given as input pattern.
@@ -291,12 +286,14 @@ class DtwSom(som):
 
     def train(self, data, epochs, autostop=False, anchors=None):
         """!
-        @brief Trains self-organized feature map (SOM).
+        @brief Trains DTW self-organized feature map (DTW-SOM).
 
         @param[in] data (list): Input data - list of points where each point is represented by list of features, for
         example coordinates.
         @param[in] epochs (uint): Number of epochs for training.
         @param[in] autostop (bool): Automatic termination of learning process when adaptation is not occurred.
+        @param[in] anchors (list): List of input patterns that should be considered as anchors. Only used for the
+        anchor initialization.
 
         @return (uint) Number of learning iterations.
 
