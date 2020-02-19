@@ -62,13 +62,13 @@ class DtwParameters:
     @brief Represents main parameters for DTW distance.
     """
 
-    def __init__(self, window=None, max_dist=None, max_step=None, max_length_diff=None):
+    def __init__(self, window=None, max_step=None, max_length_diff=None):
         """!
         @brief Constructor container of DTW parameters.
 
         """
         self.window = window
-        self.max_dist = max_dist
+        self.max_dist = None
         self.max_step = max_step
         self.max_length_diff = max_length_diff
 
@@ -346,6 +346,10 @@ class DtwSom(som):
                 self._bmu_distance_list[i]["dtw_dist"] = self.current_dtw_dic_list[
                     index
                 ]["dist"]
+
+            # Update the dtw max_dist
+            max_bmu_dist = min(self._bmu_distance_list, key=lambda bmu_dic: bmu_dic["dtw_dist"])["dtw_dist"]
+            self._dtw_params.max_dist = max_bmu_dist*1.05
 
             # Compute the average quantization error and print (average quantization error and topographic error)
             avg_quantization_error = np.mean(
