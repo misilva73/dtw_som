@@ -303,9 +303,6 @@ class DtwSom(som):
 
         self.__initialize_bmu_distance_list()
 
-        if self.__ccore_som_pointer is not None:
-            return wrapper.som_train(self.__ccore_som_pointer, data, epochs, autostop)
-
         self._sqrt_distances = self.__initialize_distances(self._size, self._location)
 
         for i in range(self._size):
@@ -373,6 +370,8 @@ class DtwSom(som):
 
     def _update_weights(self, winner_index, neighbor_index, x, dtw_dic_list):
         is_multi_dim = isinstance(x[0], np.ndarray)
+        if is_multi_dim:
+            n_dim = len(x[0])
 
         sqrt_distance = self._sqrt_distances[winner_index][neighbor_index]
 
@@ -385,7 +384,6 @@ class DtwSom(som):
             for i in range(len(self._weights[neighbor_index])):
                 matching_values = [x[j] for j in neighbor_matching_dic[i]]
                 if is_multi_dim:
-                    n_dim = len(x[i])
                     mean_matching_value = np.zeros(n_dim)
                     for k in range(n_dim):
                         k_values = [val[k] for val in matching_values]
