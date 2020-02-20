@@ -25,11 +25,19 @@ display it in a visualization that is space-efficient.
 
 ## Prerequisites
 
+In order to run the DTW-SOM package, you need the following packages:
+
     dtaidistance==1.2.3
     matplotlib==3.1.2
     numpy==1.18.1
     pyclustering==0.9.3.1
     scipy==1.4.1
+    
+In addition to these, if you wish to run the notebooks in this repository, then you need the following packages:
+
+    jupyterlab==1.2.5
+    matplotlib==3.1.2
+    matrixprofile-ts==0.0.9
 
 ## Installing
 
