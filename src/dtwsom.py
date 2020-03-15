@@ -1,5 +1,6 @@
 import math
 import random
+import warnings
 import numpy as np
 import warnings
 from dtaidistance import dtw_ndim, dtw
@@ -175,10 +176,8 @@ class DtwSom(som):
             else:
                 diagonals_list = anchors[:n_diagonals]
                 others_list = anchors[n_diagonals:]
-                raise Warning(
-                    "Provided list contains more anchors than units. On the first are used to "
-                    "initialize the network"
-                )
+                warnings.warn("Provided list contains more anchors than units. On the first are used to "
+                    "initialize the network")
             random.shuffle(diagonals_list)
             random.shuffle(others_list)
             self.__fill_weights_with_anchors(max_square, diagonals_list, others_list)
