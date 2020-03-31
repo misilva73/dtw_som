@@ -1,6 +1,5 @@
 import math
 import random
-import warnings
 import numpy as np
 import warnings
 from dtaidistance import dtw_ndim, dtw
