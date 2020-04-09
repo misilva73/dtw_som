@@ -1,4 +1,5 @@
 import math
+import copy
 import random
 import numpy as np
 import warnings
@@ -13,7 +14,6 @@ except Exception as error_instance:
         "functionality is not available (details: '%s')." % str(error_instance)
     )
 
-import pyclustering.core.som_wrapper as wrapper
 from pyclustering.nnet.som import type_conn, som
 from enum import IntEnum
 
@@ -23,11 +23,9 @@ class DtwTypeInit(IntEnum):
     @brief Enumeration of initialization types for DTW-SOM.
 
     """
-
-    ## Neurons are initialized as a random sample of the input data
+    # Neurons are initialized as a random sample of the input data
     random_sample = 0
-
-    ## Anchors?
+    # Anchors?
     anchors = 1
 
 
@@ -42,18 +40,14 @@ class DtwSomParameters:
         @brief Constructor container of DTW-SOM parameters.
 
         """
-
-        ## Type of initialization of initial neuron weights (random, random in center of the input data, random
-        # distributed in data, ditributed in line with uniform grid).
+        # Type of initialization of initial neuron weights (random, random in center of the input data, random
+        # distributed in data, distributed in line with uniform grid).
         self.init_type = DtwTypeInit.random_sample
-
-        ## Initial radius (if not specified then will be calculated by SOM).
+        # Initial radius (if not specified then will be calculated by SOM).
         self.init_radius = None
-
-        ## Rate of learning.
+        # Rate of learning.
         self.init_learn_rate = 0.1
-
-        ## Condition when learining process should be stoped. It's used when autostop mode is used.
+        # Condition when learning process should be stopped. It's used when autostop mode is used.
         self.adaptation_threshold = 0.001
 
 
@@ -167,7 +161,7 @@ class DtwSom(som):
                 data_sample = random.sample(remaining_data, self._size - n_anchors)
                 if n_anchors < n_diagonals:
                     diagonals_list = anchors + data_sample[: n_diagonals - n_anchors]
-                    others_list = data_sample[n_diagonals - n_anchors :]
+                    others_list = data_sample[n_diagonals - n_anchors:]
                 else:
                     diagonals_list = anchors[:n_diagonals]
                     others_list = anchors[n_diagonals:] + data_sample
@@ -175,13 +169,17 @@ class DtwSom(som):
             else:
                 diagonals_list = anchors[:n_diagonals]
                 others_list = anchors[n_diagonals:]
-                warnings.warn("Provided list contains more anchors than units. On the first are used to "
-                    "initialize the network")
+                if n_anchors > self._size:
+                    warnings.warn(
+                        "Provided list contains more anchors than units. On the first are used to "
+                        "initialize the network"
+                    )
             random.shuffle(diagonals_list)
             random.shuffle(others_list)
             self.__fill_weights_with_anchors(max_square, diagonals_list, others_list)
         else:
             raise AttributeError("The provided initialization type is not supported")
+        self._weights = copy.deepcopy(self._weights)
 
     @staticmethod
     def __np_is_contained_in(obs, obs_lis):
@@ -335,7 +333,7 @@ class DtwSom(som):
                 self._adaptation(index, self._data[i])
 
                 # Update statistics
-                if (autostop == True) or (epoch == epochs):
+                if (autostop is True) or (epoch == epochs):
                     self._award[index] += 1
                     self._capture_objects[index].append(i)
 
@@ -346,8 +344,10 @@ class DtwSom(som):
                 ]["dist"]
 
             # Update the dtw max_dist
-            max_bmu_dist = min(self._bmu_distance_list, key=lambda bmu_dic: bmu_dic["dtw_dist"])["dtw_dist"]
-            self._dtw_params.max_dist = max_bmu_dist*1.05
+            max_bmu_dist = max(
+                self._bmu_distance_list, key=lambda bmu_dic: bmu_dic["dtw_dist"]
+            )["dtw_dist"]
+            self._dtw_params.max_dist = max_bmu_dist * 1.05
 
             # Compute the average quantization error and print (average quantization error and topographic error)
             avg_quantization_error = np.mean(
