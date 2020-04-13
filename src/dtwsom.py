@@ -484,6 +484,30 @@ class DtwSom(som):
         plt.colorbar()
         plt.show()
 
+    def save_distance_matrix(self, output_file):
+        distance_matrix = self.get_distance_matrix()
+
+        plt.imshow(
+            distance_matrix, cmap=plt.get_cmap("inferno_r"), interpolation="kaiser"
+        )
+        plt.title("U-Matrix")
+        plt.colorbar()
+        plt.savefig(output_file)
+
+    def save_winner_matrix(self, output_file):
+        (fig, ax) = plt.subplots()
+        winner_matrix = [[0] * self._cols for i in range(self._rows)]
+        for i in range(self._rows):
+            for j in range(self._cols):
+                neuron_index = i * self._cols + j
+
+                winner_matrix[i][j] = self._award[neuron_index]
+                ax.text(i, j, str(winner_matrix[i][j]), va='center', ha='center')
+        ax.imshow(winner_matrix, cmap=plt.get_cmap('cool'), interpolation='none')
+        ax.grid(True)
+        plt.title("Winner Matrix")
+        plt.savefig(output_file)
+
     # TODO: Implement get_density_matrix function
     def get_density_matrix(self, surface_divider=20.0):
         """!
