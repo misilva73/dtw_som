@@ -250,6 +250,11 @@ class DtwSom(som):
         win_neuron_dic = min(
             self.current_dtw_dic_list, key=lambda neuron_dic: neuron_dic["dist"]
         )
+        # Make sure that we always have a BMU by increasing self._dtw_params.max_dist
+        initial_max_bmu_dist = self._dtw_params.max_dist
+        while not win_neuron_dic["dist"] < np.inf:
+            self._dtw_params.max_dist += self._dtw_params.max_dist*0.5
+        self._dtw_params.max_dist = initial_max_bmu_dist
         index = win_neuron_dic["index"]
         return index
 
@@ -347,7 +352,7 @@ class DtwSom(som):
             max_bmu_dist = max(
                 self._bmu_distance_list, key=lambda bmu_dic: bmu_dic["dtw_dist"]
             )["dtw_dist"]
-            self._dtw_params.max_dist = max_bmu_dist * 1.05
+            self._dtw_params.max_dist = max_bmu_dist * 1.1
 
             # Compute the average quantization error and print (average quantization error and topographic error)
             avg_quantization_error = np.mean(

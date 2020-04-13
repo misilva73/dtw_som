@@ -5,7 +5,7 @@ with open("../README.md", "r") as fh:
 
 setuptools.setup(
     name="dtw-som",
-    version="1.0.6",
+    version="1.0.7",
     author="Maria Ines Silva",
     author_email="misilva73@gmail.com",
     description="DTW-SOM: Self-organizing map for time-series data",
