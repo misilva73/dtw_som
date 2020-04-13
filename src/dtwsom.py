@@ -253,7 +253,8 @@ class DtwSom(som):
         # Make sure that we always have a BMU by increasing self._dtw_params.max_dist
         initial_max_bmu_dist = self._dtw_params.max_dist
         while not win_neuron_dic["dist"] < np.inf:
-            self._dtw_params.max_dist += self._dtw_params.max_dist*0.5
+            print(self._dtw_params.max_dist)
+            self._dtw_params.max_dist = self._dtw_params.max_dist*1.05
         self._dtw_params.max_dist = initial_max_bmu_dist
         index = win_neuron_dic["index"]
         return index
@@ -459,7 +460,6 @@ class DtwSom(som):
                         self._weights[neuron_index],
                         self._weights[neighbor_index],
                         window=self._dtw_params.window,
-                        max_dist=self._dtw_params.max_dist,
                         max_step=self._dtw_params.max_step,
                         max_length_diff=self._dtw_params.max_length_diff,
                     )
