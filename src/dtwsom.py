@@ -253,8 +253,11 @@ class DtwSom(som):
         # Make sure that we always have a BMU by increasing self._dtw_params.max_dist
         initial_max_bmu_dist = self._dtw_params.max_dist
         while not win_neuron_dic["dist"] < np.inf:
-            print(self._dtw_params.max_dist)
             self._dtw_params.max_dist = self._dtw_params.max_dist*1.05
+            self._set_dtw_path_and_distance_dic_list(x)
+            win_neuron_dic = min(
+                self.current_dtw_dic_list, key=lambda neuron_dic: neuron_dic["dist"]
+            )
         self._dtw_params.max_dist = initial_max_bmu_dist
         index = win_neuron_dic["index"]
         return index
