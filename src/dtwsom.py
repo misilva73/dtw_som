@@ -394,19 +394,19 @@ class DtwSom(som):
             neighbor_matching_dic = dtw_dic_list[neighbor_index]["matching_dic"]
             for i in range(len(self._weights[neighbor_index])):
                 matching_values = [x[j] for j in neighbor_matching_dic[i]]
-                if is_multi_dim:
-                    mean_matching_value = np.zeros(n_dim)
-                    for k in range(n_dim):
-                        k_values = [val[k] for val in matching_values]
-                        mean_matching_value[k] = np.mean(k_values)
-                else:
-                    mean_matching_value = np.mean(matching_values)
-
-                self._weights[neighbor_index][i] = self._weights[neighbor_index][
-                    i
-                ] + self._learn_rate * influence * (
-                    mean_matching_value - self._weights[neighbor_index][i]
-                )
+                if len(matching_values) > 0:
+                    if is_multi_dim:
+                        mean_matching_value = np.zeros(n_dim)
+                        for k in range(n_dim):
+                            k_values = [val[k] for val in matching_values]
+                            mean_matching_value[k] = np.mean(k_values)
+                    else:
+                        mean_matching_value = np.mean(matching_values)
+                    self._weights[neighbor_index][i] = self._weights[neighbor_index][
+                        i
+                    ] + self._learn_rate * influence * (
+                        mean_matching_value - self._weights[neighbor_index][i]
+                    )
 
     def _get_maximal_adaptation(self, previous_weights):
         """!
