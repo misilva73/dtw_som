@@ -481,7 +481,7 @@ class DtwSom(som):
         distance_matrix = self.get_distance_matrix()
 
         plt.imshow(
-            distance_matrix, cmap=plt.get_cmap("inferno_r"), interpolation="kaiser"
+            np.array(distance_matrix).T, cmap=plt.get_cmap("inferno_r"), interpolation="kaiser"
         )
         plt.title("U-Matrix")
         plt.colorbar()
@@ -491,7 +491,7 @@ class DtwSom(som):
         distance_matrix = self.get_distance_matrix()
 
         plt.imshow(
-            distance_matrix, cmap=plt.get_cmap("inferno_r"), interpolation="kaiser"
+            np.array(distance_matrix).T, cmap=plt.get_cmap("inferno_r"), interpolation="kaiser"
         )
         plt.title("U-Matrix")
         plt.colorbar()
@@ -506,7 +506,7 @@ class DtwSom(som):
 
                 winner_matrix[i][j] = self._award[neuron_index]
                 ax.text(i, j, str(winner_matrix[i][j]), va='center', ha='center')
-        ax.imshow(winner_matrix, cmap=plt.get_cmap('cool'), interpolation='none')
+        ax.imshow(np.array(winner_matrix).T, cmap=plt.get_cmap('cool'), interpolation='none')
         ax.grid(True)
         plt.title("Winner Matrix")
         plt.savefig(output_file)
